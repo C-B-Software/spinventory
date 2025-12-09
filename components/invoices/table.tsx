@@ -112,7 +112,7 @@ export function DataTable({ data }: { data: SalesInvoice[] }) {
     });
 
     return (
-        <div className="w-full lg:w-3/4 mx-auto mt-10 px-4 lg:px-6">
+        <div className="w-full 3xl:w-3/4 mx-auto 3xl:mt-10 px-4 lg:px-6">
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Filter name..."
@@ -145,10 +145,10 @@ export function DataTable({ data }: { data: SalesInvoice[] }) {
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext()
-                                                )}
+                                                      header.column.columnDef
+                                                          .header,
+                                                      header.getContext()
+                                                  )}
                                         </TableHead>
                                     );
                                 })}
@@ -189,8 +189,7 @@ export function DataTable({ data }: { data: SalesInvoice[] }) {
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
                 <div className="text-muted-foreground flex-1 text-sm">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
+                    There are {table.getFilteredRowModel().rows.length} row(s)
                 </div>
                 <div className="space-x-2">
                     <Button

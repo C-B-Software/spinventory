@@ -6,6 +6,8 @@ import { AuditLogAction } from "@/enums";
 import { headers } from "next/headers";
 import { auth } from "./auth";
 import { eq, lt, and, desc } from "drizzle-orm";
+import { auditLogSchema } from "@/validation/auditLog";
+import { z } from "better-auth";
 
 let lastCleanup = 0;
 const CLEANUP_INTERVAL = 24 * 60 * 60 * 1000;
@@ -13,8 +15,8 @@ const CLEANUP_INTERVAL = 24 * 60 * 60 * 1000;
 export async function logAuditEvent(action: AuditLogAction, entity: string) {
     try {
         const session = await auth.api.getSession({
-            headers: await headers()
-        })
+            headers: await headers(),
+        });
 
         await db.insert(auditLogsTable).values({
             action,
@@ -25,12 +27,17 @@ export async function logAuditEvent(action: AuditLogAction, entity: string) {
         const now = Date.now();
         if (now - lastCleanup > CLEANUP_INTERVAL) {
             lastCleanup = now;
-            await db.delete(auditLogsTable).where(
-                and(
-                    lt(auditLogsTable.createdAt, new Date(now - (24 * 60 * 60 * 1000) * 7)),
-                    eq(auditLogsTable.action, AuditLogAction.View)
-                )
-            );
+            await db
+                .delete(auditLogsTable)
+                .where(
+                    and(
+                        lt(
+                            auditLogsTable.createdAt,
+                            new Date(now - 24 * 60 * 60 * 1000 * 7)
+                        ),
+                        eq(auditLogsTable.action, AuditLogAction.View)
+                    )
+                );
         }
 
         return { success: true, category: null };
@@ -40,16 +47,12 @@ export async function logAuditEvent(action: AuditLogAction, entity: string) {
     }
 }
 
-export async function getAuditLogs() {
-    try {
-
-        const logs = await db
-            .select()
-            .from(auditLogsTable)
-            .orderBy(desc(auditLogsTable.createdAt));
-        return logs;
-    } catch (error) {
-        console.error("Failed to get audit logs:", error);
-        return { success: false, error: "Failed to get audit logs" };
-    }
+export async function getAuditLogs(): Promise<
+    z.infer<typeof auditLogSchema>[]
+> {
+    const logs = await db
+        .select()
+        .from(auditLogsTable)
+        .orderBy(desc(auditLogsTable.createdAt));
+    return logs;
 }
