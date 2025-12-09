@@ -78,25 +78,25 @@ const data = {
             title: "Audit Logs",
             url: "/dashboard/audit-logs",
             icon: IconListDetails,
-        }
-    ],
-    navSecondary: [
-        {
-            title: "Settings",
-            url: "#",
-            icon: IconSettings,
-        },
-        {
-            title: "Get Help",
-            url: "#",
-            icon: IconHelp,
-        },
-        {
-            title: "Search",
-            url: "#",
-            icon: IconSearch,
         },
     ],
+    // navSecondary: [
+    //     {
+    //         title: "Settings",
+    //         url: "#",
+    //         icon: IconSettings,
+    //     },
+    //     {
+    //         title: "Get Help",
+    //         url: "#",
+    //         icon: IconHelp,
+    //     },
+    //     {
+    //         title: "Search",
+    //         url: "#",
+    //         icon: IconSearch,
+    //     },
+    // ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -127,7 +127,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         icon: item.icon as unknown as React.FunctionComponent<IconProps>,
                     }))}
                 />
-                <NavSecondary items={data.navSecondary} className="mt-auto" />
+                {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
             </SidebarContent>
             <SidebarFooter>
                 <NavUser user={data.user} />

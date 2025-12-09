@@ -1,3 +1,3 @@
 export default {
-    emails: ["casbackx@gmail.com"],
+    emails: ["casbackx@gmail.com", "remco@serverpunt.com"],
 };
