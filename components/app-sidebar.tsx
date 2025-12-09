@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import {
+    IconBell,
     IconCamera,
     IconChartBar,
     IconDashboard,
@@ -79,6 +80,11 @@ const data = {
             url: "/dashboard/audit-logs",
             icon: IconListDetails,
         },
+        {
+            title: "Notifications",
+            url: "/dashboard/notifications",
+            icon: IconBell,
+        }
     ],
     // navSecondary: [
     //     {
