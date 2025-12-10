@@ -16,6 +16,7 @@ import {
 import {
     ArrowUpDown,
     ChevronDown,
+    MailIcon,
     MoreHorizontal,
     Plus,
     QrCode,
@@ -71,7 +72,9 @@ export const columns: ColumnDef<z.infer<typeof notificationSchema>>[] = [
                 {row.original.provider === NotificationProvider.Discord && (
                     <IconBrandDiscord className="text-blue-500 dark:text-blue-400 mt-0.5" />
                 )}
-
+                {row.original.provider === NotificationProvider.Email && (
+                    <MailIcon className="text-red-500 dark:text-red-400 mt-0.5" />
+                )}
                 <span className="capitalize">{row.original.provider}</span>
             </Badge>
         ),
@@ -80,7 +83,9 @@ export const columns: ColumnDef<z.infer<typeof notificationSchema>>[] = [
         accessorKey: "action",
         header: "Action",
         cell: ({ row }) => (
-            <div className="lowercase">{row.getValue("action")}</div>
+            <Badge variant={"outline"} className="capitalize">
+                {String(row.getValue("action")).replace("_", " ")}
+            </Badge>
         ),
     },
     {

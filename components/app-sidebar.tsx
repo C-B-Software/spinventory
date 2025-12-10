@@ -76,11 +76,11 @@ const data = {
             url: "/dashboard/invoices",
             icon: IconInvoice,
         },
-        // {
-        //     title: "Users",
-        //     url: "/dashboard/users",
-        //     icon: IconUsers,
-        // },
+        {
+            title: "Users",
+            url: "/dashboard/users",
+            icon: IconUsers,
+        },
         {
             title: "Audit Logs",
             url: "/dashboard/audit-logs",

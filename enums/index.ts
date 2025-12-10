@@ -24,6 +24,7 @@ export enum AuditLogAction {
 
 export enum NotificationProvider {
     Discord = "discord",
+    Email = "email",
 }
 
 export enum NotificationAction {
