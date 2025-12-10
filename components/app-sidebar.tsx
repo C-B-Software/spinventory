@@ -36,7 +36,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { BoxIcon, DollarSignIcon } from "lucide-react";
+import { BoxIcon, DollarSignIcon, FolderArchive } from "lucide-react";
 
 const data = {
     user: {
@@ -59,6 +59,11 @@ const data = {
             title: "Categories",
             url: "/dashboard/categories",
             icon: IconFolder,
+        },
+        {
+            title: "Brands",
+            url: "/dashboard/brands",
+            icon: FolderArchive,
         },
         {
             title: "Orders",
@@ -84,7 +89,7 @@ const data = {
             title: "Notifications",
             url: "/dashboard/notifications",
             icon: IconBell,
-        }
+        },
     ],
     // navSecondary: [
     //     {

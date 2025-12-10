@@ -24,6 +24,9 @@ export const productsTable = pgTable("products", {
     categoryId: integer("category_id")
         .notNull()
         .references(() => categoriesTable.id, { onDelete: "cascade" }),
+    brandId: integer("brand_id").references(() => brandsTable.id, {
+        onDelete: "cascade",
+    }),
     name: text("name").notNull(),
     imageUrl: text("image_url"),
     noneMainImagesUrl: text("none_main_images_url"),
@@ -56,6 +59,12 @@ export const notificationsTable = pgTable("notifications", {
     id: serial("id").primaryKey(),
     provider: notificationEnum("provider").notNull(),
     content: text("content").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const brandsTable = pgTable("brands", {
+    id: serial("id").primaryKey(),
+    name: text("name").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -249,3 +258,12 @@ export type SelectAccount = typeof account.$inferSelect;
 
 export type InsertVerification = typeof verification.$inferInsert;
 export type SelectVerification = typeof verification.$inferSelect;
+
+export type InsertNotification = typeof notificationsTable.$inferInsert;
+export type SelectNotification = typeof notificationsTable.$inferSelect;
+
+export type InsertAuditLog = typeof auditLogsTable.$inferInsert;
+export type SelectAuditLog = typeof auditLogsTable.$inferSelect;
+
+export type InsertBrand = typeof brandsTable.$inferInsert;
+export type SelectBrand = typeof brandsTable.$inferSelect;

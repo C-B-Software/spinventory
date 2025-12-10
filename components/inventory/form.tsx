@@ -10,7 +10,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { SelectCategory, SelectProduct } from "@/database/schema";
+import { SelectBrand, SelectCategory, SelectProduct } from "@/database/schema";
 import { UploadButton } from "@/utils/uploadthing";
 import { useState } from "react";
 import { Button } from "../ui/button";
@@ -20,11 +20,13 @@ import { useRouter } from "next/navigation";
 
 type ProductFormProps = {
     categories: SelectCategory[];
+    brands: SelectBrand[];
     product?: SelectProduct;
 };
 
 export default function InventoryForm({
     categories,
+    brands,
     product,
 }: ProductFormProps) {
     const [mainImage, setMainImage] = useState<string | null>(
@@ -78,7 +80,7 @@ export default function InventoryForm({
 
     return (
         <div className="px-4 lg:w-3/4 mx-auto  lg:px-6 mt-10">
-            <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-5">
+            <form onSubmit={handleSubmit} className="grid xl:grid-cols-2 gap-5">
                 <input
                     required
                     type="hidden"
@@ -126,12 +128,28 @@ export default function InventoryForm({
                     </Select>
                 </div>
                 <div className="flex flex-col gap-3">
-                    <Label>Configuration</Label>
-                    <Textarea
-                        name="configuration"
-                        placeholder="Product Configuration"
-                        defaultValue={product?.configuration}
-                    />
+                    <Label>Brand</Label>
+                    <Select
+                        required
+                        name="brand"
+                        defaultValue={product?.brandId?.toString()}
+                    >
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a brand" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                {brands.map((brand) => (
+                                    <SelectItem
+                                        key={brand.id}
+                                        value={brand.id.toString()}
+                                    >
+                                        {brand.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                 </div>
                 <div className="flex flex-col gap-3">
                     <Label>Price</Label>
@@ -150,6 +168,14 @@ export default function InventoryForm({
                         name="description"
                         placeholder="Product Description"
                         defaultValue={product?.description}
+                    />
+                </div>
+                <div className="flex flex-col gap-3">
+                    <Label>Configuration</Label>
+                    <Textarea
+                        name="configuration"
+                        placeholder="Product Configuration"
+                        defaultValue={product?.configuration}
                     />
                 </div>
                 <div className="flex flex-col gap-3 col-span-2">
@@ -213,8 +239,8 @@ export default function InventoryForm({
                     {loading
                         ? "Saving..."
                         : product
-                            ? "Update Product"
-                            : "Create Product"}
+                        ? "Update Product"
+                        : "Create Product"}
                 </Button>
             </form>
         </div>

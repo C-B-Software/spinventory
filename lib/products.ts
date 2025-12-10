@@ -57,7 +57,10 @@ export async function getProduct(id: number): Promise<SelectProduct | null> {
 
 export async function createProduct(formData: FormData) {
     try {
-        await logAuditEvent(AuditLogAction.Create, `product: ${formData.get("name")}`);
+        await logAuditEvent(
+            AuditLogAction.Create,
+            `product: ${formData.get("name")}`
+        );
         // Get other form data
         const name = formData.get("name") as string;
         const description = formData.get("description") as string;
@@ -89,7 +92,10 @@ export async function updateProductStock(
     action: "add" | "remove" = "add"
 ) {
     try {
-        await logAuditEvent(AuditLogAction.Update, `product stock: ${productId}`);
+        await logAuditEvent(
+            AuditLogAction.Update,
+            `product stock: ${productId}`
+        );
 
         const product = await getProduct(productId);
         if (!product) {
@@ -150,6 +156,7 @@ export async function updateProduct(id: number, formData: FormData) {
         const configuration = formData.get("configuration") as string;
         const mainImageUrl = formData.get("image_url") as string;
         const additionalImages = formData.get("images_url") as string;
+        const brand = formData.get("brand") as string | null;
 
         await db
             .update(productsTable)
@@ -161,6 +168,7 @@ export async function updateProduct(id: number, formData: FormData) {
                 description,
                 configuration,
                 price: price,
+                brandId: brand ? parseInt(brand) : null,
             })
             .where(eq(productsTable.id, id));
 
