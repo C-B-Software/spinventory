@@ -1,5 +1,6 @@
 import { getBrand } from "@/lib/brands";
 import BrandForm from "@/components/brands/form";
+
 export default async function Edit({
     params,
 }: {

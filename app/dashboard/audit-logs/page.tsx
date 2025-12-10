@@ -1,6 +1,5 @@
 import { DataTable } from "@/components/audit-logs/table";
 import { getAuditLogs } from "@/lib/audit-log";
-import { getProducts } from "@/lib/products";
 
 export default async function Page() {
     const data = await getAuditLogs();

@@ -37,6 +37,7 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { BoxIcon, DollarSignIcon, FolderArchive } from "lucide-react";
+import Logo from "./logo";
 
 const data = {
     user: {
@@ -121,7 +122,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             className="data-[slot=sidebar-menu-button]:!p-1.5"
                         >
                             <a href="#">
-                                <IconInnerShadowTop className="!size-5" />
+                                <Logo />
                                 <span className="text-base font-semibold">
                                     {BrandingConfig.appName}
                                 </span>

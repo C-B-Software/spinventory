@@ -25,3 +25,8 @@ export enum AuditLogAction {
 export enum NotificationProvider {
     Discord = "discord",
 }
+
+export enum NotificationAction {
+    OrderCreated = "order_created",
+    OrderPaid = "order_paid",
+}

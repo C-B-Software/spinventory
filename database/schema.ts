@@ -10,7 +10,7 @@ import {
     index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { OrderStatus, NotificationProvider } from "@/enums";
+import { OrderStatus, NotificationProvider, NotificationAction } from "@/enums";
 
 export const categoriesTable = pgTable("categories", {
     id: serial("id").primaryKey(),
@@ -37,18 +37,17 @@ export const productsTable = pgTable("products", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const orderStatusEnum = pgEnum("status", [
-    OrderStatus.Pending,
-    OrderStatus.Paid,
-    OrderStatus.Processing,
-    OrderStatus.Shipped,
-    OrderStatus.Cancelled,
-    OrderStatus.Finished,
-]);
+export const orderStatusEnum = pgEnum("status", OrderStatus);
 
-export const notificationEnum = pgEnum("notification_provider", [
-    NotificationProvider.Discord,
-]);
+export const notificationEnum = pgEnum(
+    "notification_provider",
+    NotificationProvider
+);
+
+export const notificationActionEnum = pgEnum(
+    "notification_action",
+    NotificationAction
+);
 
 export const deliveryMethodEnum = pgEnum("delivery_method", [
     "delivery",
@@ -58,6 +57,7 @@ export const deliveryMethodEnum = pgEnum("delivery_method", [
 export const notificationsTable = pgTable("notifications", {
     id: serial("id").primaryKey(),
     provider: notificationEnum("provider").notNull(),
+    action: notificationActionEnum("action").notNull(),
     content: text("content").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
 });

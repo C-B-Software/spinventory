@@ -57,21 +57,107 @@ import {
     SelectValue,
 } from "../ui/select";
 import { notificationSchema } from "@/validation/notification";
+import { deleteNotification } from "@/lib/notifications";
+import { toast } from "react-toastify";
+import { Badge } from "../ui/badge";
+import { IconBrandDiscord } from "@tabler/icons-react";
 
 export const columns: ColumnDef<z.infer<typeof notificationSchema>>[] = [
     {
         accessorKey: "provider",
         header: "Provider",
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("provider")}</div>
+            <Badge variant="outline" className="text-muted-foreground px-1.5">
+                {row.original.provider === NotificationProvider.Discord && (
+                    <IconBrandDiscord className="text-blue-500 dark:text-blue-400 mt-0.5" />
+                )}
+
+                <span className="capitalize">{row.original.provider}</span>
+            </Badge>
+        ),
+    },
+    {
+        accessorKey: "action",
+        header: "Action",
+        cell: ({ row }) => (
+            <div className="lowercase">{row.getValue("action")}</div>
         ),
     },
     {
         accessorKey: "content",
         header: "Content",
         cell: ({ row }) => (
-            <div className="lowercase">{row.getValue("content")}</div>
+            <div
+                className="w-full truncate break-all"
+                title={row.getValue("content")}
+            >
+                {row.getValue("content")}
+            </div>
         ),
+    },
+    {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => {
+            const notification = row.original;
+            const router = useRouter();
+
+            return (
+                <div className="float-end flex gap-3">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    navigator.clipboard.writeText(
+                                        notification.id.toString()
+                                    );
+                                    toast.success(
+                                        "Notification ID copied to clipboard"
+                                    );
+                                }}
+                            >
+                                Copy notification ID
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <Link
+                                href={
+                                    "/dashboard/notifications/" +
+                                    notification.id +
+                                    "/edit"
+                                }
+                            >
+                                <DropdownMenuItem>
+                                    Edit notification
+                                </DropdownMenuItem>
+                            </Link>
+                            <DropdownMenuItem
+                                onClick={async () => {
+                                    const conf = confirm(
+                                        "Are you sure you want to delete this notification?"
+                                    );
+                                    if (conf) {
+                                        await deleteNotification(
+                                            notification.id
+                                        );
+                                        toast.success("Notification deleted");
+                                        router.refresh();
+                                    }
+                                }}
+                            >
+                                Delete Product
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            );
+        },
     },
 ];
 
@@ -153,23 +239,28 @@ export function DataTable({
                 </Link>
             </div>
             <div className="overflow-hidden rounded-md border">
-                <Table>
+                <Table className="table-fixed">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        <TableHead key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
-                                        </TableHead>
-                                    );
-                                })}
+                                {headerGroup.headers.map((header) => (
+                                    <TableHead
+                                        key={header.id}
+                                        className={
+                                            header.id === "content"
+                                                ? "w-1/4"
+                                                : ""
+                                        }
+                                    >
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                  header.column.columnDef
+                                                      .header,
+                                                  header.getContext()
+                                              )}
+                                    </TableHead>
+                                ))}
                             </TableRow>
                         ))}
                     </TableHeader>
@@ -183,7 +274,14 @@ export function DataTable({
                                     }
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell
+                                            className={
+                                                cell.column.id === "content"
+                                                    ? "w-full truncate break-all"
+                                                    : ""
+                                            }
+                                            key={cell.id}
+                                        >
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext()
