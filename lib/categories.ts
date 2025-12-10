@@ -6,13 +6,16 @@ import { eq, desc } from "drizzle-orm";
 import { categorySchema } from "@/validation/category";
 import { logAuditEvent } from "./audit-log";
 import { AuditLogAction } from "@/enums";
+import { authorized } from "./security";
 
 export async function getCategories(): Promise<SelectCategory[]> {
+    await authorized();
     const categories = await db.select().from(categoriesTable);
     return categories;
 }
 
 export async function getCategory(id: number): Promise<SelectCategory | null> {
+    await authorized();
     try {
         const validatedId = z
             .number()
@@ -38,8 +41,8 @@ export async function getCategory(id: number): Promise<SelectCategory | null> {
     }
 }
 
-
 export async function deleteCategory(id: number) {
+    await authorized();
     try {
         await logAuditEvent(AuditLogAction.Delete, `category: ${id}`);
         const validatedId = z
@@ -49,7 +52,9 @@ export async function deleteCategory(id: number) {
             })
             .parse(id);
 
-        await db.delete(categoriesTable).where(eq(categoriesTable.id, validatedId));
+        await db
+            .delete(categoriesTable)
+            .where(eq(categoriesTable.id, validatedId));
     } catch (error) {
         if (error instanceof z.ZodError) {
             console.error("Invalid category ID:", error.issues);
@@ -62,8 +67,12 @@ export async function deleteCategory(id: number) {
 }
 
 export async function createCategory(formData: FormData) {
+    await authorized();
     try {
-        await logAuditEvent(AuditLogAction.Create, `category: ${formData.get("name")}`);
+        await logAuditEvent(
+            AuditLogAction.Create,
+            `category: ${formData.get("name")}`
+        );
         const name = formData.get("name") as string;
         const mainImageUrl = formData.get("image_url") as string;
         await db.insert(categoriesTable).values({
@@ -79,6 +88,7 @@ export async function createCategory(formData: FormData) {
 }
 
 export async function updateCategory(id: number, formData: FormData) {
+    await authorized();
     try {
         await logAuditEvent(AuditLogAction.Update, `category: ${id}`);
 

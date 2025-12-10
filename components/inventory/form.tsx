@@ -130,7 +130,6 @@ export default function InventoryForm({
                 <div className="flex flex-col gap-3">
                     <Label>Brand</Label>
                     <Select
-                        required
                         name="brand"
                         defaultValue={product?.brandId?.toString()}
                     >

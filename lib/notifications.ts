@@ -5,10 +5,12 @@ import { NotificationAction, NotificationProvider } from "@/enums";
 import { notificationSchema } from "@/validation/notification";
 import { z } from "better-auth";
 import { desc, eq } from "drizzle-orm";
+import { authorized } from "./security";
 
 export async function getNotifications(): Promise<
     z.infer<typeof notificationSchema>[]
 > {
+    await authorized();
     const notifications = await db
         .select()
         .from(notificationsTable)
@@ -19,6 +21,7 @@ export async function getNotifications(): Promise<
 export async function createNotification(
     data: FormData
 ): Promise<{ success: boolean; error?: string }> {
+    await authorized();
     try {
         const content = data.get("content") as string;
         const provider = data.get("provider") as NotificationProvider;
@@ -44,6 +47,7 @@ export async function updateNotification(
     id: number,
     data: FormData
 ): Promise<{ success: boolean; error?: string }> {
+    await authorized();
     try {
         const content = data.get("content") as string;
         const provider = data.get("provider") as NotificationProvider;
@@ -72,6 +76,7 @@ export async function updateNotification(
 export async function deleteNotification(
     id: number
 ): Promise<{ success: boolean; error?: string }> {
+    await authorized();
     try {
         await db
             .delete(notificationsTable)
@@ -86,6 +91,7 @@ export async function deleteNotification(
 export async function getNotification(
     id: number
 ): Promise<SelectNotification | null> {
+    await authorized();
     const notification = await db
         .select()
         .from(notificationsTable)

@@ -7,8 +7,10 @@ import { z } from "zod";
 import { eq, desc } from "drizzle-orm";
 import { logAuditEvent } from "./audit-log";
 import { AuditLogAction } from "@/enums";
+import { authorized } from "./security";
 
 export async function getProducts(): Promise<z.infer<typeof productSchema>[]> {
+    await authorized();
     const products = await db
         .select()
         .from(productsTable)
@@ -29,6 +31,7 @@ export async function getProducts(): Promise<z.infer<typeof productSchema>[]> {
 }
 
 export async function getProduct(id: number): Promise<SelectProduct | null> {
+    await authorized();
     try {
         const validatedId = z
             .number()
@@ -56,12 +59,12 @@ export async function getProduct(id: number): Promise<SelectProduct | null> {
 }
 
 export async function createProduct(formData: FormData) {
+    await authorized();
     try {
         await logAuditEvent(
             AuditLogAction.Create,
             `product: ${formData.get("name")}`
         );
-        // Get other form data
         const name = formData.get("name") as string;
         const description = formData.get("description") as string;
         const categoryId = parseInt(formData.get("category") as string);
@@ -91,6 +94,7 @@ export async function updateProductStock(
     quantityChange: number,
     action: "add" | "remove" = "add"
 ) {
+    await authorized();
     try {
         await logAuditEvent(
             AuditLogAction.Update,
@@ -123,6 +127,7 @@ export async function updateProductStock(
 }
 
 export default async function deleteProduct(id: number) {
+    await authorized();
     try {
         await logAuditEvent(AuditLogAction.Delete, `product: ${id}`);
 
@@ -146,6 +151,7 @@ export default async function deleteProduct(id: number) {
 }
 
 export async function updateProduct(id: number, formData: FormData) {
+    await authorized();
     try {
         await logAuditEvent(AuditLogAction.Update, `product: ${id}`);
 

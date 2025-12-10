@@ -12,8 +12,10 @@ import {
 } from "@/validation/order";
 import { z } from "zod";
 import { eq, desc, asc } from "drizzle-orm";
+import { authorized } from "./security";
 
 export async function getOrders(): Promise<z.infer<typeof orderSchema>[]> {
+    await authorized();
     const orders = await db
         .select()
         .from(ordersTable)
@@ -35,6 +37,7 @@ export async function getOrders(): Promise<z.infer<typeof orderSchema>[]> {
 export async function getOrdersWithCustomersAndOrderItems(): Promise<
     z.infer<typeof orderWithCustomerandOrderItemsSchema>[]
 > {
+    await authorized();
     const orders = await db
         .select()
         .from(ordersTable)

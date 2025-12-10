@@ -8,11 +8,13 @@ import { auth } from "./auth";
 import { eq, lt, and, desc } from "drizzle-orm";
 import { auditLogSchema } from "@/validation/auditLog";
 import { z } from "better-auth";
+import { authorized } from "./security";
 
 let lastCleanup = 0;
 const CLEANUP_INTERVAL = 24 * 60 * 60 * 1000;
 
 export async function logAuditEvent(action: AuditLogAction, entity: string) {
+    await authorized();
     try {
         const session = await auth.api.getSession({
             headers: await headers(),
@@ -50,6 +52,7 @@ export async function logAuditEvent(action: AuditLogAction, entity: string) {
 export async function getAuditLogs(): Promise<
     z.infer<typeof auditLogSchema>[]
 > {
+    await authorized();
     const logs = await db
         .select()
         .from(auditLogsTable)
