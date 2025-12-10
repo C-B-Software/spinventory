@@ -71,6 +71,27 @@
       "when": 1765339202204,
       "tag": "0009_light_old_lace",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1765395638358,
+      "tag": "0010_flippant_cloak",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1765396163515,
+      "tag": "0011_silly_captain_marvel",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1765399180608,
+      "tag": "0012_nasty_misty_knight",
+      "breakpoints": true
     }
   ]
 }

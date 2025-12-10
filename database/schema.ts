@@ -10,7 +10,31 @@ import {
     index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { OrderStatus, NotificationProvider, NotificationAction } from "@/enums";
+import {
+    OrderStatus,
+    NotificationProvider,
+    NotificationAction,
+    UserPermission,
+} from "@/enums";
+
+export const orderStatusEnum = pgEnum("status", OrderStatus);
+
+export const notificationEnum = pgEnum(
+    "notification_provider",
+    NotificationProvider
+);
+
+export const notificationActionEnum = pgEnum(
+    "notification_action",
+    NotificationAction
+);
+
+export const userPermissionEnum = pgEnum("user_permission", UserPermission);
+
+export const deliveryMethodEnum = pgEnum("delivery_method", [
+    "delivery",
+    "pickup",
+]);
 
 export const categoriesTable = pgTable("categories", {
     id: serial("id").primaryKey(),
@@ -36,23 +60,6 @@ export const productsTable = pgTable("products", {
     quantityInStock: integer("quantity_in_stock").notNull().default(0),
     createdAt: timestamp("created_at").notNull().defaultNow(),
 });
-
-export const orderStatusEnum = pgEnum("status", OrderStatus);
-
-export const notificationEnum = pgEnum(
-    "notification_provider",
-    NotificationProvider
-);
-
-export const notificationActionEnum = pgEnum(
-    "notification_action",
-    NotificationAction
-);
-
-export const deliveryMethodEnum = pgEnum("delivery_method", [
-    "delivery",
-    "pickup",
-]);
 
 export const notificationsTable = pgTable("notifications", {
     id: serial("id").primaryKey(),
@@ -141,11 +148,16 @@ export const orderItemsTable = pgTable("order_items", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const user = pgTable("user", {
+export const usersTable = pgTable("user", {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     emailVerified: boolean("email_verified").default(false).notNull(),
+    permissions: userPermissionEnum("permissions")
+        .array()
+        .notNull()
+        .default([]),
+    access: boolean("access").default(false).notNull(),
     image: text("image"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
@@ -153,6 +165,8 @@ export const user = pgTable("user", {
         .$onUpdate(() => /* @__PURE__ */ new Date())
         .notNull(),
 });
+
+export const user = usersTable;
 
 export const session = pgTable(
     "session",
@@ -168,7 +182,7 @@ export const session = pgTable(
         userAgent: text("user_agent"),
         userId: text("user_id")
             .notNull()
-            .references(() => user.id, { onDelete: "cascade" }),
+            .references(() => usersTable.id, { onDelete: "cascade" }),
     },
     (table) => [index("session_userId_idx").on(table.userId)]
 );
@@ -181,7 +195,7 @@ export const account = pgTable(
         providerId: text("provider_id").notNull(),
         userId: text("user_id")
             .notNull()
-            .references(() => user.id, { onDelete: "cascade" }),
+            .references(() => usersTable.id, { onDelete: "cascade" }),
         accessToken: text("access_token"),
         refreshToken: text("refresh_token"),
         idToken: text("id_token"),
@@ -213,22 +227,22 @@ export const verification = pgTable(
     (table) => [index("verification_identifier_idx").on(table.identifier)]
 );
 
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(usersTable, ({ many }) => ({
     sessions: many(session),
     accounts: many(account),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
-    user: one(user, {
+    user: one(usersTable, {
         fields: [session.userId],
-        references: [user.id],
+        references: [usersTable.id],
     }),
 }));
 
 export const accountRelations = relations(account, ({ one }) => ({
-    user: one(user, {
+    user: one(usersTable, {
         fields: [account.userId],
-        references: [user.id],
+        references: [usersTable.id],
     }),
 }));
 
@@ -247,8 +261,8 @@ export type SelectOrderItem = typeof orderItemsTable.$inferSelect;
 export type InsertCustomer = typeof customersTable.$inferInsert;
 export type SelectCustomer = typeof customersTable.$inferSelect;
 
-export type InsertUser = typeof user.$inferInsert;
-export type SelectUser = typeof user.$inferSelect;
+export type InsertUser = typeof usersTable.$inferInsert;
+export type SelectUser = typeof usersTable.$inferSelect;
 
 export type InsertSession = typeof session.$inferInsert;
 export type SelectSession = typeof session.$inferSelect;

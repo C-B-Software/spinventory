@@ -1,0 +1,2 @@
+DROP TYPE "public"."user_permission";--> statement-breakpoint
+CREATE TYPE "public"."user_permission" AS ENUM('view_inventory', 'create_inventory', 'update_inventory', 'view_categories', 'create_categories', 'update_categories', 'view_brands', 'create_brands', 'update_brands', 'view_orders', 'view_invoices', 'view_users', 'create_users', 'update_users', 'view_audit_logs', 'view_notifications', 'create_notification', 'update_notification');

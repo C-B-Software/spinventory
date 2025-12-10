@@ -31,3 +31,31 @@ export enum NotificationAction {
     OrderCreated = "order_created",
     OrderPaid = "order_paid",
 }
+
+export enum UserPermission {
+    ViewInventory = "view_inventory",
+    CreateInventory = "create_inventory",
+    UpdateInventory = "update_inventory",
+
+    ViewCategories = "view_categories",
+    CreateCategories = "create_categories",
+    UpdateCategories = "update_categories",
+
+    ViewBrands = "view_brands",
+    CreateBrands = "create_brands",
+    UpdateBrands = "update_brands",
+
+    ViewOrders = "view_orders",
+
+    ViewInvoices = "view_invoices",
+
+    ViewUsers = "view_users",
+    CreateUsers = "create_users",
+    UpdateUsers = "update_users",
+
+    ViewAuditLogs = "view_audit_logs",
+
+    ViewNotifications = "view_notifications",
+    CreateNotification = "create_notification",
+    UpdateNotification = "update_notification",
+}

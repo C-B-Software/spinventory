@@ -66,10 +66,8 @@ export default function NotificationForm({
         try {
             let result;
             if (notification) {
-                // Edit mode
                 result = await updateNotification(notification.id, formData);
             } else {
-                // Create mode
                 result = await createNotification(formData);
             }
 

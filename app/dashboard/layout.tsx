@@ -11,14 +11,17 @@ export default async function Layout({
     children: React.ReactNode;
 }>) {
     const session = await auth.api.getSession({
-        headers: await headers()
-    })
+        headers: await headers(),
+    });
 
-    if (!session || !session.user || !AccessConfig.emails.includes(session.user.email || "")) {
+    if (!session || !session.user || !session.user.access) {
         return (
             <div className="flex min-h-screen flex-col items-center justify-center p-4">
                 <h1 className="mb-4 text-2xl font-bold">Access Denied</h1>
-                <p className="text-center text-muted-foreground w-[30rem]">You do not have permission to access this dashboard. Please contact the administrator if you believe this is an error.</p>
+                <p className="text-center text-muted-foreground w-[30rem]">
+                    You do not have permission to access this dashboard. Please
+                    contact the administrator if you believe this is an error.
+                </p>
             </div>
         );
     }

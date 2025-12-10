@@ -5,9 +5,19 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
         provider: "pg",
-        schema: schema
+        schema: schema,
     }),
     emailAndPassword: {
         enabled: true,
     },
+    user: {
+        additionalFields: {
+            access: {
+                type: "boolean",
+                nullable: false,
+            },
+        },
+    },
 });
+
+type Session = typeof auth.$Infer.Session;
