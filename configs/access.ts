@@ -1,7 +1,11 @@
+import { UserPermission } from "@/enums";
+
 export default {
-    emails: [
-        "casbackx@gmail.com",
-        "remco@serverpunt.com",
-        "joey@serverpunt.com",
+    pages: [
+        {
+            validation: (pathname: string) =>
+                pathname === "/dashboard/invoices",
+            permissions: [UserPermission.ViewInvoices],
+        },
     ],
 };

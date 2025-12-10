@@ -5,17 +5,22 @@ import { z } from "zod";
 import { eq, desc } from "drizzle-orm";
 import { categorySchema } from "@/validation/category";
 import { logAuditEvent } from "./audit-log";
-import { AuditLogAction } from "@/enums";
-import { authorized } from "./security";
+import { AuditLogAction, UserPermission } from "@/enums";
+import { authorized, hasPermissions } from "./security";
 
 export async function getCategories(): Promise<SelectCategory[]> {
     await authorized();
+    await hasPermissions([UserPermission.ViewCategories]);
     const categories = await db.select().from(categoriesTable);
     return categories;
 }
 
 export async function getCategory(id: number): Promise<SelectCategory | null> {
     await authorized();
+    await hasPermissions([
+        UserPermission.ViewCategories,
+        UserPermission.UpdateCategories,
+    ]);
     try {
         const validatedId = z
             .number()
@@ -43,6 +48,7 @@ export async function getCategory(id: number): Promise<SelectCategory | null> {
 
 export async function deleteCategory(id: number) {
     await authorized();
+    await hasPermissions([UserPermission.DeleteCategories]);
     try {
         await logAuditEvent(AuditLogAction.Delete, `category: ${id}`);
         const validatedId = z
@@ -68,6 +74,7 @@ export async function deleteCategory(id: number) {
 
 export async function createCategory(formData: FormData) {
     await authorized();
+    await hasPermissions([UserPermission.CreateCategories]);
     try {
         await logAuditEvent(
             AuditLogAction.Create,
@@ -89,6 +96,7 @@ export async function createCategory(formData: FormData) {
 
 export async function updateCategory(id: number, formData: FormData) {
     await authorized();
+    await hasPermissions([UserPermission.UpdateCategories]);
     try {
         await logAuditEvent(AuditLogAction.Update, `category: ${id}`);
 

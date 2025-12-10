@@ -92,6 +92,13 @@
       "when": 1765399180608,
       "tag": "0012_nasty_misty_knight",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1765405454008,
+      "tag": "0013_tricky_blue_blade",
+      "breakpoints": true
     }
   ]
 }

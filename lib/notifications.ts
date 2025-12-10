@@ -1,16 +1,22 @@
 "use server";
 import { db } from "@/database/connect";
 import { notificationsTable, SelectNotification } from "@/database/schema";
-import { NotificationAction, NotificationProvider } from "@/enums";
+import {
+    NotificationAction,
+    NotificationProvider,
+    UserPermission,
+} from "@/enums";
 import { notificationSchema } from "@/validation/notification";
 import { z } from "better-auth";
 import { desc, eq } from "drizzle-orm";
-import { authorized } from "./security";
+import { authorized, hasPermissions } from "./security";
 
 export async function getNotifications(): Promise<
     z.infer<typeof notificationSchema>[]
 > {
     await authorized();
+    await hasPermissions([UserPermission.ViewNotifications]);
+
     const notifications = await db
         .select()
         .from(notificationsTable)
@@ -22,6 +28,7 @@ export async function createNotification(
     data: FormData
 ): Promise<{ success: boolean; error?: string }> {
     await authorized();
+    await hasPermissions([UserPermission.CreateNotification]);
     try {
         const content = data.get("content") as string;
         const provider = data.get("provider") as NotificationProvider;
@@ -48,6 +55,8 @@ export async function updateNotification(
     data: FormData
 ): Promise<{ success: boolean; error?: string }> {
     await authorized();
+    await hasPermissions([UserPermission.UpdateNotification]);
+
     try {
         const content = data.get("content") as string;
         const provider = data.get("provider") as NotificationProvider;
@@ -77,6 +86,7 @@ export async function deleteNotification(
     id: number
 ): Promise<{ success: boolean; error?: string }> {
     await authorized();
+    await hasPermissions([UserPermission.DeleteNotification]);
     try {
         await db
             .delete(notificationsTable)
@@ -92,6 +102,10 @@ export async function getNotification(
     id: number
 ): Promise<SelectNotification | null> {
     await authorized();
+    await hasPermissions([
+        UserPermission.UpdateNotification,
+        UserPermission.ViewNotifications,
+    ]);
     const notification = await db
         .select()
         .from(notificationsTable)

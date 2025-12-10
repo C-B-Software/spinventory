@@ -4,17 +4,22 @@ import { brandsTable, SelectBrand } from "@/database/schema";
 import { z } from "zod";
 import { eq, desc } from "drizzle-orm";
 import { logAuditEvent } from "./audit-log";
-import { AuditLogAction } from "@/enums";
-import { authorized } from "./security";
+import { AuditLogAction, UserPermission } from "@/enums";
+import { authorized, hasPermissions } from "./security";
 
 export async function getBrands(): Promise<SelectBrand[]> {
     await authorized();
+    await hasPermissions([UserPermission.ViewBrands]);
     const brands = await db.select().from(brandsTable);
     return brands;
 }
 
 export async function getBrand(id: number): Promise<SelectBrand | null> {
     await authorized();
+    await hasPermissions([
+        UserPermission.ViewBrands,
+        UserPermission.UpdateBrands,
+    ]);
     try {
         const validatedId = z
             .number()
@@ -42,6 +47,7 @@ export async function getBrand(id: number): Promise<SelectBrand | null> {
 
 export async function deleteBrand(id: number) {
     await authorized();
+    await hasPermissions([UserPermission.DeleteBrands]);
     try {
         await logAuditEvent(AuditLogAction.Delete, `brand: ${id}`);
         const validatedId = z
@@ -65,6 +71,7 @@ export async function deleteBrand(id: number) {
 
 export async function createBrand(formData: FormData) {
     await authorized();
+    await hasPermissions([UserPermission.CreateBrands]);
     try {
         await logAuditEvent(
             AuditLogAction.Create,
@@ -84,6 +91,7 @@ export async function createBrand(formData: FormData) {
 
 export async function updateBrand(id: number, formData: FormData) {
     await authorized();
+    await hasPermissions([UserPermission.UpdateBrands]);
     try {
         await logAuditEvent(AuditLogAction.Update, `brand: ${id}`);
 

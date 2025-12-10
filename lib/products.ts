@@ -6,11 +6,12 @@ import { productSchema } from "@/validation/product";
 import { z } from "zod";
 import { eq, desc } from "drizzle-orm";
 import { logAuditEvent } from "./audit-log";
-import { AuditLogAction } from "@/enums";
-import { authorized } from "./security";
+import { AuditLogAction, UserPermission } from "@/enums";
+import { authorized, hasPermissions } from "./security";
 
 export async function getProducts(): Promise<z.infer<typeof productSchema>[]> {
     await authorized();
+    await hasPermissions([UserPermission.ViewInventory]);
     const products = await db
         .select()
         .from(productsTable)
@@ -32,6 +33,11 @@ export async function getProducts(): Promise<z.infer<typeof productSchema>[]> {
 
 export async function getProduct(id: number): Promise<SelectProduct | null> {
     await authorized();
+    await hasPermissions([
+        UserPermission.ViewInventory,
+        UserPermission.UpdateInventory,
+    ]);
+
     try {
         const validatedId = z
             .number()
@@ -60,6 +66,7 @@ export async function getProduct(id: number): Promise<SelectProduct | null> {
 
 export async function createProduct(formData: FormData) {
     await authorized();
+    await hasPermissions([UserPermission.CreateInventory]);
     try {
         await logAuditEvent(
             AuditLogAction.Create,
@@ -95,6 +102,7 @@ export async function updateProductStock(
     action: "add" | "remove" = "add"
 ) {
     await authorized();
+    await hasPermissions([UserPermission.UpdateInventory]);
     try {
         await logAuditEvent(
             AuditLogAction.Update,
@@ -128,6 +136,7 @@ export async function updateProductStock(
 
 export default async function deleteProduct(id: number) {
     await authorized();
+    await hasPermissions([UserPermission.DeleteInventory]);
     try {
         await logAuditEvent(AuditLogAction.Delete, `product: ${id}`);
 
@@ -152,6 +161,7 @@ export default async function deleteProduct(id: number) {
 
 export async function updateProduct(id: number, formData: FormData) {
     await authorized();
+    await hasPermissions([UserPermission.UpdateInventory]);
     try {
         await logAuditEvent(AuditLogAction.Update, `product: ${id}`);
 

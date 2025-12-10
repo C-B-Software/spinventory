@@ -2,13 +2,13 @@
 
 import { db } from "@/database/connect";
 import { auditLogsTable } from "@/database/schema";
-import { AuditLogAction } from "@/enums";
+import { AuditLogAction, UserPermission } from "@/enums";
 import { headers } from "next/headers";
 import { auth } from "./auth";
 import { eq, lt, and, desc } from "drizzle-orm";
 import { auditLogSchema } from "@/validation/auditLog";
 import { z } from "better-auth";
-import { authorized } from "./security";
+import { authorized, hasPermissions } from "./security";
 
 let lastCleanup = 0;
 const CLEANUP_INTERVAL = 24 * 60 * 60 * 1000;
@@ -53,6 +53,7 @@ export async function getAuditLogs(): Promise<
     z.infer<typeof auditLogSchema>[]
 > {
     await authorized();
+    await hasPermissions([UserPermission.ViewAuditLogs]);
     const logs = await db
         .select()
         .from(auditLogsTable)

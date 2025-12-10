@@ -36,14 +36,17 @@ export enum UserPermission {
     ViewInventory = "view_inventory",
     CreateInventory = "create_inventory",
     UpdateInventory = "update_inventory",
+    DeleteInventory = "delete_inventory",
 
     ViewCategories = "view_categories",
     CreateCategories = "create_categories",
     UpdateCategories = "update_categories",
+    DeleteCategories = "delete_categories",
 
     ViewBrands = "view_brands",
     CreateBrands = "create_brands",
     UpdateBrands = "update_brands",
+    DeleteBrands = "delete_brands",
 
     ViewOrders = "view_orders",
 
@@ -52,10 +55,12 @@ export enum UserPermission {
     ViewUsers = "view_users",
     CreateUsers = "create_users",
     UpdateUsers = "update_users",
+    DeleteUsers = "delete_users",
 
     ViewAuditLogs = "view_audit_logs",
 
     ViewNotifications = "view_notifications",
     CreateNotification = "create_notification",
     UpdateNotification = "update_notification",
+    DeleteNotification = "delete_notification",
 }

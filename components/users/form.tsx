@@ -32,7 +32,7 @@ export default function UserForm({ user }: UserFormProps) {
         setLoading(true);
         const form = event.target as HTMLFormElement;
         const formData = new FormData(form);
-        console.log(formData);
+
         try {
             let result;
             if (user) {
@@ -52,7 +52,7 @@ export default function UserForm({ user }: UserFormProps) {
                 toast.error(result?.error || "Failed to save user.");
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error("An error occurred while saving the user.");
         } finally {
             setLoading(false);

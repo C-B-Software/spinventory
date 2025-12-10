@@ -13,9 +13,7 @@ type CategoryFormProps = {
     category?: SelectCategory;
 };
 
-export default function CategoryForm({
-    category,
-}: CategoryFormProps) {
+export default function CategoryForm({ category }: CategoryFormProps) {
     const [mainImage, setMainImage] = useState<string | null>(
         category?.imageUrl ?? null
     );
@@ -54,7 +52,7 @@ export default function CategoryForm({
                 toast.error(result.error || "Failed to save category.");
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error("An error occurred while saving the category.");
         } finally {
             setLoading(false);
@@ -107,8 +105,8 @@ export default function CategoryForm({
                     {loading
                         ? "Saving..."
                         : category
-                            ? "Update Category"
-                            : "Create Category"}
+                        ? "Update Category"
+                        : "Create Category"}
                 </Button>
             </form>
         </div>

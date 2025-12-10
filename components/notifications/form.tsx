@@ -83,7 +83,7 @@ export default function NotificationForm({
                 toast.error(result.error || "Failed to save notification.");
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error("An error occurred while saving the notification.");
         } finally {
             setLoading(false);

@@ -39,9 +39,7 @@ export function SignupForm({
                 callbackURL: "/dashboard",
             },
             {
-                onRequest: (ctx) => {
-                    console.log("Signing up...", ctx);
-                },
+                onRequest: (ctx) => {},
                 onSuccess: async (ctx) => {
                     await logAuditEvent(
                         AuditLogAction.Signup,
@@ -49,8 +47,6 @@ export function SignupForm({
                     );
                 },
                 onError: (ctx) => {
-                    console.log("Error context:", ctx);
-                    console.log("Error object:", ctx.error);
                     // Handle HTTP error response
                     const errorMessage = `${ctx.error.statusText} (${ctx.error.status})`;
                     alert(errorMessage);

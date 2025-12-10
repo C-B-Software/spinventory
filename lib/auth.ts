@@ -16,6 +16,11 @@ export const auth = betterAuth({
                 type: "boolean",
                 nullable: false,
             },
+            permissions: {
+                type: "string[]",
+                nullable: false,
+                default: [],
+            },
         },
     },
 });

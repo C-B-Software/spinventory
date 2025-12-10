@@ -45,7 +45,7 @@ export default function BrandForm({ brand }: BrandFormProps) {
                 toast.error(result.error || "Failed to save brand.");
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error("An error occurred while saving the brand.");
         } finally {
             setLoading(false);

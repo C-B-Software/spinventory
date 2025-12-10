@@ -12,10 +12,12 @@ import {
 } from "@/validation/order";
 import { z } from "zod";
 import { eq, desc, asc } from "drizzle-orm";
-import { authorized } from "./security";
+import { authorized, hasPermissions } from "./security";
+import { UserPermission } from "@/enums";
 
 export async function getOrders(): Promise<z.infer<typeof orderSchema>[]> {
     await authorized();
+    await hasPermissions([UserPermission.ViewOrders]);
     const orders = await db
         .select()
         .from(ordersTable)
@@ -38,6 +40,7 @@ export async function getOrdersWithCustomersAndOrderItems(): Promise<
     z.infer<typeof orderWithCustomerandOrderItemsSchema>[]
 > {
     await authorized();
+    await hasPermissions([UserPermission.ViewOrders]);
     const orders = await db
         .select()
         .from(ordersTable)
@@ -56,5 +59,4 @@ export async function getOrdersWithCustomersAndOrderItems(): Promise<
         }
         return validOrders;
     }, []);
-    return [];
 }

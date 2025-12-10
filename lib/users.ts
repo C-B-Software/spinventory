@@ -6,16 +6,21 @@ import { eq, desc } from "drizzle-orm";
 import { userSchema } from "@/validation/user";
 import { logAuditEvent } from "./audit-log";
 import { AuditLogAction, UserPermission } from "@/enums";
-import { authorized } from "./security";
+import { authorized, hasPermissions } from "./security";
 
 export async function getUsers(): Promise<SelectUser[]> {
     await authorized();
+    await hasPermissions([UserPermission.ViewUsers]);
     const users = await db.select().from(usersTable);
     return users;
 }
 
 export async function getUser(id: string): Promise<SelectUser | null> {
     await authorized();
+    await hasPermissions([
+        UserPermission.ViewUsers,
+        UserPermission.UpdateUsers,
+    ]);
     try {
         const validatedId = z.string().parse(id);
 
@@ -38,6 +43,7 @@ export async function getUser(id: string): Promise<SelectUser | null> {
 
 export async function deleteUser(id: string) {
     await authorized();
+    await hasPermissions([UserPermission.DeleteUsers]);
     try {
         await logAuditEvent(AuditLogAction.Delete, `user: ${id}`);
         const validatedId = z
@@ -63,6 +69,7 @@ export async function deleteUser(id: string) {
 
 export async function updateUser(id: string, formData: FormData) {
     await authorized();
+    await hasPermissions([UserPermission.UpdateUsers]);
     try {
         await logAuditEvent(AuditLogAction.Update, `user: ${id}`);
         const name = formData.get("name") as string;

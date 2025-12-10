@@ -1,8 +1,10 @@
 import { SalesInvoice } from "@/types";
 import Axios from "axios";
-import { authorized } from "./security";
+import { authorized, hasPermissions } from "./security";
+import { UserPermission } from "@/enums";
 export async function getInvoices(): Promise<SalesInvoice[]> {
     await authorized();
+    await hasPermissions([UserPermission.ViewInvoices]);
     try {
         const response = await Axios.get(
             "https://api.mollie.com/v2/sales-invoices",
