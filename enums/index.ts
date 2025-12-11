@@ -30,9 +30,17 @@ export enum NotificationProvider {
 export enum NotificationAction {
     OrderCreated = "order_created",
     OrderPaid = "order_paid",
+    StockLow = "stock_low",
+    StockOut = "stock_out",
 }
 
 export enum UserPermission {
+    ViewOrders = "view_orders",
+
+    ViewInvoices = "view_invoices",
+
+    ViewAuditLogs = "view_audit_logs",
+
     ViewInventory = "view_inventory",
     CreateInventory = "create_inventory",
     UpdateInventory = "update_inventory",
@@ -48,16 +56,10 @@ export enum UserPermission {
     UpdateBrands = "update_brands",
     DeleteBrands = "delete_brands",
 
-    ViewOrders = "view_orders",
-
-    ViewInvoices = "view_invoices",
-
     ViewUsers = "view_users",
     CreateUsers = "create_users",
     UpdateUsers = "update_users",
     DeleteUsers = "delete_users",
-
-    ViewAuditLogs = "view_audit_logs",
 
     ViewNotifications = "view_notifications",
     CreateNotification = "create_notification",

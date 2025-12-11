@@ -15,11 +15,13 @@ export const auth = betterAuth({
             access: {
                 type: "boolean",
                 nullable: false,
+                input: false,
             },
             permissions: {
                 type: "string[]",
                 nullable: false,
                 default: [],
+                input: false,
             },
         },
     },

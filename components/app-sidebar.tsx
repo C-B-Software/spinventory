@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/sidebar";
 import { BoxIcon, DollarSignIcon, FolderArchive } from "lucide-react";
 import Logo from "./logo";
+import { UserPermission } from "@/enums";
 
 const data = {
     user: {
@@ -50,46 +51,55 @@ const data = {
             title: "Dashboard",
             url: "/dashboard",
             icon: IconDashboard,
+            permissions: [],
         },
         {
             title: "Inventory",
             url: "/dashboard/inventory",
             icon: BoxIcon,
+            permissions: [UserPermission.ViewInventory],
         },
         {
             title: "Categories",
             url: "/dashboard/categories",
             icon: IconFolder,
+            permissions: [UserPermission.ViewCategories],
         },
         {
             title: "Brands",
             url: "/dashboard/brands",
             icon: FolderArchive,
+            permissions: [UserPermission.ViewBrands],
         },
         {
             title: "Orders",
             url: "/dashboard/orders",
             icon: DollarSignIcon,
+            permissions: [UserPermission.ViewOrders],
         },
         {
             title: "Invoices",
             url: "/dashboard/invoices",
             icon: IconInvoice,
+            permissions: [UserPermission.ViewInvoices],
         },
         {
             title: "Users",
             url: "/dashboard/users",
             icon: IconUsers,
+            permissions: [UserPermission.ViewUsers],
         },
         {
             title: "Audit Logs",
             url: "/dashboard/audit-logs",
             icon: IconListDetails,
+            permissions: [UserPermission.ViewAuditLogs],
         },
         {
             title: "Notifications",
             url: "/dashboard/notifications",
             icon: IconBell,
+            permissions: [UserPermission.ViewNotifications],
         },
     ],
     // navSecondary: [
