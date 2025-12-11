@@ -50,6 +50,7 @@ import QRCode from "./qr";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import CSVDownload from "../csv-download";
 
 export const columns: ColumnDef<z.infer<typeof productSchema>>[] = [
     // {
@@ -302,11 +303,14 @@ export function DataTable({
                     }
                     className="max-w-sm"
                 />
-                <Link href="/dashboard/inventory/create" className="ml-auto">
-                    <Button variant="outline">
-                        <Plus /> Add Product
-                    </Button>
-                </Link>
+                <div className="ml-auto flex items-center justify-center gap-2">
+                    <CSVDownload type="products" fileName="products.csv" />
+                    <Link href="/dashboard/inventory/create">
+                        <Button variant="outline">
+                            <Plus /> Add Product
+                        </Button>
+                    </Link>
+                </div>
             </div>
             <div className="overflow-hidden rounded-md border">
                 <Table>
