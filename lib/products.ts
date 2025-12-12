@@ -1,7 +1,12 @@
 "use server";
 
 import { db } from "@/database/connect";
-import { productsTable, SelectProduct } from "@/database/schema";
+import {
+    linkedProductsTable,
+    productsTable,
+    SelectLinkedProduct,
+    SelectProduct,
+} from "@/database/schema";
 import { productSchema } from "@/validation/product";
 import { z } from "zod";
 import { eq, desc } from "drizzle-orm";
@@ -9,7 +14,7 @@ import { logAuditEvent } from "./audit-log";
 import { AuditLogAction, UserPermission } from "@/enums";
 import { authorized, hasPermissions } from "./security";
 
-export async function getProducts(): Promise<z.infer<typeof productSchema>[]> {
+export async function getProducts(): Promise<SelectProduct[]> {
     await authorized();
     await hasPermissions([UserPermission.ViewInventory]);
     const products = await db
@@ -17,18 +22,20 @@ export async function getProducts(): Promise<z.infer<typeof productSchema>[]> {
         .from(productsTable)
         .orderBy(desc(productsTable.createdAt));
 
-    return products.reduce<z.infer<typeof productSchema>[]>(
-        (validProducts, product) => {
-            const result = productSchema.safeParse(product);
-            if (result.success) {
-                validProducts.push(result.data);
-            } else {
-                console.error("Invalid product data:", result.error);
-            }
-            return validProducts;
-        },
-        []
-    );
+    return products;
+}
+
+export async function getLinkedProductIds(
+    productId: number
+): Promise<SelectLinkedProduct[]> {
+    await authorized();
+    await hasPermissions([UserPermission.ViewInventory]);
+
+    const linkedProducts = await db
+        .select()
+        .from(linkedProductsTable)
+        .where(eq(linkedProductsTable.productId, productId));
+    return linkedProducts;
 }
 
 export async function getProduct(id: number): Promise<SelectProduct | null> {
@@ -79,14 +86,29 @@ export async function createProduct(formData: FormData) {
         const configuration = formData.get("configuration") as string;
         const mainImageUrl = formData.get("image_url") as string;
         const additionalImages = formData.get("images_url") as string;
-        await db.insert(productsTable).values({
-            categoryId,
-            name,
-            imageUrl: mainImageUrl,
-            noneMainImagesUrl: JSON.stringify(additionalImages.split(",")),
-            description,
-            configuration,
-            price: price,
+        const linkedProducts = formData.get("linked_products") as string | null;
+
+        const products = await db
+            .insert(productsTable)
+            .values({
+                categoryId,
+                name,
+                imageUrl: mainImageUrl,
+                noneMainImagesUrl: JSON.stringify(additionalImages.split(",")),
+                description,
+                configuration,
+                price: price,
+            })
+            .returning({ insertedId: productsTable.id });
+
+        linkedProducts?.split(",").forEach(async (productId) => {
+            const linkedProductId = parseInt(productId);
+            if (!isNaN(linkedProductId)) {
+                await db.insert(linkedProductsTable).values({
+                    productId: products[0].insertedId,
+                    linkedProductId: linkedProductId,
+                });
+            }
         });
 
         return { success: true, product: null };
@@ -173,6 +195,7 @@ export async function updateProduct(id: number, formData: FormData) {
         const mainImageUrl = formData.get("image_url") as string;
         const additionalImages = formData.get("images_url") as string;
         const brand = formData.get("brand") as string | null;
+        const linkedProducts = formData.get("linked_products") as string | null;
 
         await db
             .update(productsTable)
@@ -187,6 +210,20 @@ export async function updateProduct(id: number, formData: FormData) {
                 brandId: brand ? parseInt(brand) : null,
             })
             .where(eq(productsTable.id, id));
+
+        await db
+            .delete(linkedProductsTable)
+            .where(eq(linkedProductsTable.productId, id));
+
+        linkedProducts?.split(",").forEach(async (productId) => {
+            const linkedProductId = parseInt(productId);
+            if (!isNaN(linkedProductId)) {
+                await db.insert(linkedProductsTable).values({
+                    productId: id,
+                    linkedProductId: linkedProductId,
+                });
+            }
+        });
 
         return { success: true, product: null };
     } catch (error) {

@@ -10,24 +10,34 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { SelectBrand, SelectCategory, SelectProduct } from "@/database/schema";
+import {
+    SelectBrand,
+    SelectCategory,
+    SelectLinkedProduct,
+    SelectProduct,
+} from "@/database/schema";
 import { UploadButton } from "@/utils/uploadthing";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { createProduct, updateProduct } from "@/lib/products";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { MultiSelect } from "../ui/multi-select";
 
 type ProductFormProps = {
     categories: SelectCategory[];
     brands: SelectBrand[];
     product?: SelectProduct;
+    products: SelectProduct[];
+    linkedProducts?: SelectLinkedProduct[];
 };
 
 export default function InventoryForm({
     categories,
     brands,
     product,
+    products,
+    linkedProducts,
 }: ProductFormProps) {
     const [mainImage, setMainImage] = useState<string | null>(
         product?.imageUrl ?? null
@@ -175,6 +185,37 @@ export default function InventoryForm({
                         name="configuration"
                         placeholder="Product Configuration"
                         defaultValue={product?.configuration}
+                    />
+                </div>
+                <div className="flex flex-col gap-3">
+                    <Label>Options Linking</Label>
+                    <MultiSelect
+                        name="linked_products"
+                        options={products.map((p) => {
+                            return { label: p.name, value: p.id.toString() };
+                        })}
+                        defaultSelected={
+                            linkedProducts
+                                ?.map((lp) => {
+                                    const prod = products.find(
+                                        (p) => p.id === lp.linkedProductId
+                                    );
+                                    return prod
+                                        ? {
+                                              label: prod.name,
+                                              value: prod.id.toString(),
+                                          }
+                                        : null;
+                                })
+                                .filter(
+                                    (
+                                        item
+                                    ): item is {
+                                        label: string;
+                                        value: string;
+                                    } => item !== null
+                                ) || []
+                        }
                     />
                 </div>
                 <div className="flex flex-col gap-3 col-span-2">

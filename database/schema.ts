@@ -47,7 +47,7 @@ export const productsTable = pgTable("products", {
     id: serial("id").primaryKey(),
     categoryId: integer("category_id")
         .notNull()
-        .references(() => categoriesTable.id, { onDelete: "cascade" }),
+        .references(() => categoriesTable.id),
     brandId: integer("brand_id").references(() => brandsTable.id, {
         onDelete: "cascade",
     }),
@@ -58,6 +58,17 @@ export const productsTable = pgTable("products", {
     configuration: text("configuration").notNull(),
     price: integer("price").notNull(),
     quantityInStock: integer("quantity_in_stock").notNull().default(0),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const linkedProductsTable = pgTable("linked_products", {
+    id: serial("id").primaryKey(),
+    productId: integer("product_id")
+        .notNull()
+        .references(() => productsTable.id),
+    linkedProductId: integer("linked_product_id")
+        .notNull()
+        .references(() => productsTable.id),
     createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -103,7 +114,7 @@ export const ordersTable = pgTable("orders", {
     id: serial("id").primaryKey(),
     customerId: integer("customer_id")
         .notNull()
-        .references(() => customersTable.id, { onDelete: "cascade" }),
+        .references(() => customersTable.id),
     invoiceId: text("invoice_id"),
     status: orderStatusEnum("status").notNull().default(OrderStatus.Pending),
     deliveryMethod: deliveryMethodEnum("delivery_method"),
@@ -139,10 +150,10 @@ export const orderItemsTable = pgTable("order_items", {
     id: serial("id").primaryKey(),
     orderId: integer("order_id")
         .notNull()
-        .references(() => ordersTable.id, { onDelete: "cascade" }),
+        .references(() => ordersTable.id),
     productId: integer("product_id")
         .notNull()
-        .references(() => productsTable.id, { onDelete: "cascade" }),
+        .references(() => productsTable.id),
     quantity: integer("quantity").notNull(),
     unitPrice: doublePrecision("unit_price").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -182,7 +193,7 @@ export const session = pgTable(
         userAgent: text("user_agent"),
         userId: text("user_id")
             .notNull()
-            .references(() => usersTable.id, { onDelete: "cascade" }),
+            .references(() => usersTable.id),
     },
     (table) => [index("session_userId_idx").on(table.userId)]
 );
@@ -195,7 +206,7 @@ export const account = pgTable(
         providerId: text("provider_id").notNull(),
         userId: text("user_id")
             .notNull()
-            .references(() => usersTable.id, { onDelete: "cascade" }),
+            .references(() => usersTable.id),
         accessToken: text("access_token"),
         refreshToken: text("refresh_token"),
         idToken: text("id_token"),
@@ -245,6 +256,51 @@ export const accountRelations = relations(account, ({ one }) => ({
         references: [usersTable.id],
     }),
 }));
+
+export const categoryRelations = relations(categoriesTable, ({ many }) => ({
+    products: many(productsTable),
+}));
+
+export const productRelations = relations(productsTable, ({ one }) => ({
+    category: one(categoriesTable, {
+        fields: [productsTable.categoryId],
+        references: [categoriesTable.id],
+    }),
+    brand: one(brandsTable, {
+        fields: [productsTable.brandId],
+        references: [brandsTable.id],
+    }),
+}));
+
+export const brandRelations = relations(brandsTable, ({ many }) => ({
+    products: many(productsTable),
+}));
+
+export const customerRelations = relations(customersTable, ({ many }) => ({
+    orders: many(ordersTable),
+}));
+
+export const orderRelations = relations(ordersTable, ({ one, many }) => ({
+    customer: one(customersTable, {
+        fields: [ordersTable.customerId],
+        references: [customersTable.id],
+    }),
+    items: many(orderItemsTable),
+}));
+
+export const orderItemRelations = relations(orderItemsTable, ({ one }) => ({
+    order: one(ordersTable, {
+        fields: [orderItemsTable.orderId],
+        references: [ordersTable.id],
+    }),
+    product: one(productsTable, {
+        fields: [orderItemsTable.productId],
+        references: [productsTable.id],
+    }),
+}));
+
+export type InsertLinkedProduct = typeof linkedProductsTable.$inferInsert;
+export type SelectLinkedProduct = typeof linkedProductsTable.$inferSelect;
 
 export type InsertProduct = typeof productsTable.$inferInsert;
 export type SelectProduct = typeof productsTable.$inferSelect;

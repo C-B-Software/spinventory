@@ -1,1 +1,0 @@
-ALTER TYPE "public"."notification_action" ADD VALUE 'order_paid';

@@ -51,8 +51,9 @@ import Link from "next/link";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import CSVDownload from "../csv-download";
+import { SelectProduct } from "@/database/schema";
 
-export const columns: ColumnDef<z.infer<typeof productSchema>>[] = [
+export const columns: ColumnDef<SelectProduct>[] = [
     // {
     //     id: "select",
     //     header: ({ table }) => (
@@ -82,7 +83,7 @@ export const columns: ColumnDef<z.infer<typeof productSchema>>[] = [
         header: "",
         cell: ({ row }) => (
             <Image
-                src={row.original.imageUrl}
+                src={row.original.imageUrl || "/placeholder.png"}
                 alt={row.original.name}
                 width={40}
                 height={40}
@@ -256,11 +257,7 @@ export const columns: ColumnDef<z.infer<typeof productSchema>>[] = [
     },
 ];
 
-export function DataTable({
-    data,
-}: {
-    data: Array<z.infer<typeof productSchema>>;
-}) {
+export function DataTable({ data }: { data: SelectProduct[] }) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([]);

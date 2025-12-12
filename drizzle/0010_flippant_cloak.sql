@@ -1,2 +1,0 @@
-CREATE TYPE "public"."user_permission" AS ENUM('manage_inventory', 'manage_categories', 'manage_brands', 'manage_orders', 'manage_invoices', 'manage_users', 'manage_audit_logs', 'manage_notifications');--> statement-breakpoint
-ALTER TABLE "user" ADD COLUMN "permissions" "user_permission"[] DEFAULT '{}' NOT NULL;
