@@ -52,7 +52,11 @@ export function NavMain({
                             <SidebarMenuItem key={item.title}>
                                 <SidebarMenuButton
                                     asChild
-                                    isActive={pathname === item.url}
+                                    isActive={
+                                        pathname === item.url ||
+                                        (pathname.startsWith(`${item.url}/`) &&
+                                            item.url !== "/dashboard")
+                                    }
                                     tooltip={item.title}
                                 >
                                     <Link href={item.url}>
