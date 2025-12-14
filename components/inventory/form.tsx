@@ -231,7 +231,7 @@ export default function InventoryForm({
                 </div>
                 <div className="flex flex-col gap-3">
                     <Label>Hidden</Label>
-                    <Checkbox name="access" defaultChecked={product?.hidden} />
+                    <Checkbox name="hidden" defaultChecked={product?.hidden} />
                 </div>
                 <div className="flex flex-col gap-3 col-span-2">
                     <Label htmlFor="terms">Front image</Label>
