@@ -23,6 +23,7 @@ import { createProduct, updateProduct } from "@/lib/products";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { MultiSelect } from "../ui/multi-select";
+import { Checkbox } from "../ui/checkbox";
 
 type ProductFormProps = {
     categories: SelectCategory[];
@@ -227,6 +228,10 @@ export default function InventoryForm({
                         placeholder="Quantity in Stock"
                         defaultValue={product?.quantityInStock}
                     />
+                </div>
+                <div className="flex flex-col gap-3">
+                    <Label>Hidden</Label>
+                    <Checkbox name="access" defaultChecked={product?.hidden} />
                 </div>
                 <div className="flex flex-col gap-3 col-span-2">
                     <Label htmlFor="terms">Front image</Label>

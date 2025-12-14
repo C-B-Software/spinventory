@@ -90,6 +90,7 @@ export async function createProduct(formData: FormData) {
         const quantityInStock = parseInt(
             formData.get("quantity_in_stock") as string
         );
+        const hidden = formData.get("hidden") as string;
 
         const products = await db
             .insert(productsTable)
@@ -102,6 +103,7 @@ export async function createProduct(formData: FormData) {
                 configuration,
                 price: price,
                 quantityInStock: quantityInStock,
+                hidden: hidden ? true : false,
             })
             .returning({ insertedId: productsTable.id });
 
@@ -203,6 +205,7 @@ export async function updateProduct(id: number, formData: FormData) {
         const quantityInStock = parseInt(
             formData.get("quantity_in_stock") as string
         );
+        const hidden = formData.get("hidden") as string;
 
         await db
             .update(productsTable)
@@ -216,6 +219,7 @@ export async function updateProduct(id: number, formData: FormData) {
                 price: price,
                 brandId: brand ? parseInt(brand) : null,
                 quantityInStock: quantityInStock,
+                hidden: hidden ? true : false,
             })
             .where(eq(productsTable.id, id));
 

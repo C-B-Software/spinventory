@@ -1,9 +1,8 @@
 "use client";
 
-import { IconCirclePlusFilled, IconMail, type Icon } from "@tabler/icons-react";
+import { type Icon } from "@tabler/icons-react";
 import { usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { Button } from "@/components/ui/button";
 import {
     SidebarGroup,
     SidebarGroupContent,
@@ -25,12 +24,7 @@ export function NavMain({
     }[];
 }) {
     const pathname = usePathname();
-    const {
-        data: session,
-        isPending, //loading state
-        error, //error object
-        refetch, //refetch the session
-    } = authClient.useSession();
+    const { data: session } = authClient.useSession();
 
     return (
         <SidebarGroup>
