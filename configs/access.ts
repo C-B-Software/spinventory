@@ -13,6 +13,12 @@ export default {
         },
         {
             validation: (pathname: string) =>
+                pathname.includes("/dashboard/orders/") &&
+                pathname.endsWith("/show"),
+            permissions: [UserPermission.ViewOrders],
+        },
+        {
+            validation: (pathname: string) =>
                 pathname === "/dashboard/inventory",
             permissions: [UserPermission.ViewInventory],
         },

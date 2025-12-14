@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { OrderStatus, DeliveryMethod } from "@/enums";
+import { productSchema } from "./product";
 
 export const orderSchema = z.object({
     id: z.number(),
@@ -58,6 +59,12 @@ export const customerSchema = z.object({
     invoiceCity: z.string(),
     invoicePhonenumber: z.string().nullable(),
     createdAt: z.date(),
+});
+
+export const ordersWithCustomerandOrderItemsSchema = z.object({
+    orders: orderSchema,
+    customers: customerSchema,
+    order_items: z.any().nullable(),
 });
 
 export const orderWithCustomerandOrderItemsSchema = z.object({

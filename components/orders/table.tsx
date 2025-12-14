@@ -24,7 +24,10 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { z } from "zod";
-import { orderWithCustomerandOrderItemsSchema } from "@/validation/order";
+import {
+    ordersWithCustomerandOrderItemsSchema,
+    orderWithCustomerandOrderItemsSchema,
+} from "@/validation/order";
 import { Badge } from "../ui/badge";
 import { OrderStatus } from "@/enums";
 import {
@@ -43,9 +46,10 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import Link from "next/link";
 
 export const columns: ColumnDef<
-    z.infer<typeof orderWithCustomerandOrderItemsSchema>
+    z.infer<typeof ordersWithCustomerandOrderItemsSchema>
 >[] = [
     {
         accessorKey: "id",
@@ -121,7 +125,7 @@ export const columns: ColumnDef<
 export function DataTable({
     data,
 }: {
-    data: Array<z.infer<typeof orderWithCustomerandOrderItemsSchema>>;
+    data: Array<z.infer<typeof ordersWithCustomerandOrderItemsSchema>>;
 }) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] =
@@ -237,10 +241,15 @@ export function DataTable({
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
+                                            <Link
+                                                className="w-full"
+                                                href={`/dashboard/orders/${row.original.orders.id}/show`}
+                                            >
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </Link>
                                         </TableCell>
                                     ))}
                                 </TableRow>

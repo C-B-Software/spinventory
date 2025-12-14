@@ -5,9 +5,11 @@ import {
     customersTable,
     orderItemsTable,
     ordersTable,
+    productsTable,
 } from "@/database/schema";
 import {
     orderSchema,
+    ordersWithCustomerandOrderItemsSchema,
     orderWithCustomerandOrderItemsSchema,
 } from "@/validation/order";
 import { z } from "zod";
@@ -37,7 +39,7 @@ export async function getOrders(): Promise<z.infer<typeof orderSchema>[]> {
 }
 
 export async function getOrdersWithCustomersAndOrderItems(): Promise<
-    z.infer<typeof orderWithCustomerandOrderItemsSchema>[]
+    z.infer<typeof ordersWithCustomerandOrderItemsSchema>[]
 > {
     await authorized();
     await hasPermissions([UserPermission.ViewOrders]);
@@ -49,9 +51,9 @@ export async function getOrdersWithCustomersAndOrderItems(): Promise<
         .orderBy(desc(ordersTable.createdAt));
 
     return orders.reduce<
-        z.infer<typeof orderWithCustomerandOrderItemsSchema>[]
+        z.infer<typeof ordersWithCustomerandOrderItemsSchema>[]
     >((validOrders, order) => {
-        const result = orderWithCustomerandOrderItemsSchema.safeParse(order);
+        const result = ordersWithCustomerandOrderItemsSchema.safeParse(order);
         if (result.success) {
             validOrders.push(result.data);
         } else {
@@ -59,4 +61,49 @@ export async function getOrdersWithCustomersAndOrderItems(): Promise<
         }
         return validOrders;
     }, []);
+}
+
+export async function getOrderWithCustomerAndOrderItems(
+    orderId: number
+): Promise<z.infer<typeof orderWithCustomerandOrderItemsSchema> | null> {
+    await authorized();
+    await hasPermissions([UserPermission.ViewOrders]);
+
+    const orders = await db
+        .select()
+        .from(ordersTable)
+        .leftJoin(customersTable, eq(ordersTable.customerId, customersTable.id)) // Join customersTable
+        .where(eq(ordersTable.id, orderId));
+
+    if (!orders || orders.length === 0) {
+        return null;
+    }
+
+    const orderItems = await db
+        .select()
+        .from(orderItemsTable)
+        .leftJoin(
+            productsTable,
+            eq(orderItemsTable.productId, productsTable.id)
+        )
+        .where(eq(orderItemsTable.orderId, orderId))
+        .orderBy(asc(orderItemsTable.id));
+
+    const aggregatedOrder = {
+        ...orders[0],
+        order_items: orderItems.map((item) => ({
+            ...item.order_items,
+            product: item.products,
+        })),
+    };
+
+    const result =
+        orderWithCustomerandOrderItemsSchema.safeParse(aggregatedOrder);
+
+    if (result.success) {
+        return result.data;
+    } else {
+        console.error("Invalid order data:", result.error);
+        return null;
+    }
 }

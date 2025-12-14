@@ -66,3 +66,19 @@ export enum UserPermission {
     UpdateNotification = "update_notification",
     DeleteNotification = "delete_notification",
 }
+
+export enum DeliveryStatus {
+    Pending = "pending",
+    Shipped = "shipped",
+    Delivered = "delivered",
+    Failure = "failure",
+    Unknown = "unknown",
+}
+
+export enum DHLDeliveryStatus {
+    Delivered = "delivered",
+    Failure = "failure",
+    PreTransit = "pre-transit",
+    Transit = "transit",
+    Unknown = "unknown",
+}

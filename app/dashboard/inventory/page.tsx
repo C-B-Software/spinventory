@@ -1,3 +1,4 @@
+// DHL linkage
 import { DataTable } from "@/components/inventory/table";
 import { getProducts } from "@/lib/products";
 
