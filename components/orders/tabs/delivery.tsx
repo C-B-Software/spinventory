@@ -24,7 +24,7 @@ export default function Delivery({
     };
 }) {
     const [status, setStatus] = useState<DeliveryStatus>(
-        DeliveryStatus.Unknown
+        DeliveryStatus.Failure
     );
 
     // Helper function to determine the color based on the status

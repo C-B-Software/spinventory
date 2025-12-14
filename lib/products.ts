@@ -87,6 +87,9 @@ export async function createProduct(formData: FormData) {
         const mainImageUrl = formData.get("image_url") as string;
         const additionalImages = formData.get("images_url") as string;
         const linkedProducts = formData.get("linked_products") as string | null;
+        const quantityInStock = parseInt(
+            formData.get("quantity_in_stock") as string
+        );
 
         const products = await db
             .insert(productsTable)
@@ -98,6 +101,7 @@ export async function createProduct(formData: FormData) {
                 description,
                 configuration,
                 price: price,
+                quantityInStock: quantityInStock,
             })
             .returning({ insertedId: productsTable.id });
 
@@ -196,6 +200,9 @@ export async function updateProduct(id: number, formData: FormData) {
         const additionalImages = formData.get("images_url") as string;
         const brand = formData.get("brand") as string | null;
         const linkedProducts = formData.get("linked_products") as string | null;
+        const quantityInStock = parseInt(
+            formData.get("quantity_in_stock") as string
+        );
 
         await db
             .update(productsTable)
@@ -208,6 +215,7 @@ export async function updateProduct(id: number, formData: FormData) {
                 configuration,
                 price: price,
                 brandId: brand ? parseInt(brand) : null,
+                quantityInStock: quantityInStock,
             })
             .where(eq(productsTable.id, id));
 

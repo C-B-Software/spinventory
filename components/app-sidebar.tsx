@@ -84,7 +84,7 @@ const data = {
             permissions: [UserPermission.ViewInvoices],
         },
         {
-            title: "Users",
+            title: "Login Users",
             url: "/dashboard/users",
             icon: IconUsers,
             permissions: [UserPermission.ViewUsers],

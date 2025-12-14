@@ -218,6 +218,16 @@ export default function InventoryForm({
                         }
                     />
                 </div>
+                <div className="flex flex-col gap-3">
+                    <Label>Stock</Label>
+                    <Input
+                        required
+                        type="number"
+                        name="quantity_in_stock"
+                        placeholder="Quantity in Stock"
+                        defaultValue={product?.quantityInStock}
+                    />
+                </div>
                 <div className="flex flex-col gap-3 col-span-2">
                     <Label htmlFor="terms">Front image</Label>
                     <div
