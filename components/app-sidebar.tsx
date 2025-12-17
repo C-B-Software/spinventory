@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import {
+    IconArrowBack,
     IconBell,
     IconCamera,
     IconChartBar,
@@ -66,6 +67,12 @@ const data = {
             permissions: [UserPermission.ViewCategories],
         },
         {
+            title: "Retours",
+            url: "/dashboard/retours",
+            icon: IconArrowBack,
+            permissions: [UserPermission.ViewRetours],
+        },
+        {
             title: "Brands",
             url: "/dashboard/brands",
             icon: FolderArchive,
@@ -84,6 +91,14 @@ const data = {
             permissions: [UserPermission.ViewInvoices],
         },
         {
+            title: "Notifications",
+            url: "/dashboard/notifications",
+            icon: IconBell,
+            permissions: [UserPermission.ViewNotifications],
+        },
+    ],
+    navSecondary: [
+        {
             title: "Login Users",
             url: "/dashboard/users",
             icon: IconUsers,
@@ -95,30 +110,7 @@ const data = {
             icon: IconListDetails,
             permissions: [UserPermission.ViewAuditLogs],
         },
-        {
-            title: "Notifications",
-            url: "/dashboard/notifications",
-            icon: IconBell,
-            permissions: [UserPermission.ViewNotifications],
-        },
     ],
-    // navSecondary: [
-    //     {
-    //         title: "Settings",
-    //         url: "#",
-    //         icon: IconSettings,
-    //     },
-    //     {
-    //         title: "Get Help",
-    //         url: "#",
-    //         icon: IconHelp,
-    //     },
-    //     {
-    //         title: "Search",
-    //         url: "#",
-    //         icon: IconSearch,
-    //     },
-    // ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -149,7 +141,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         icon: item.icon as unknown as React.FunctionComponent<IconProps>,
                     }))}
                 />
-                {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+                <NavSecondary items={data.navSecondary} className="mt-auto" />
             </SidebarContent>
             <SidebarFooter>
                 <NavUser user={data.user} />

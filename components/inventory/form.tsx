@@ -24,6 +24,8 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { MultiSelect } from "../ui/multi-select";
 import { Checkbox } from "../ui/checkbox";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 
 type ProductFormProps = {
     categories: SelectCategory[];
@@ -115,53 +117,6 @@ export default function InventoryForm({
                     />
                 </div>
                 <div className="flex flex-col gap-3">
-                    <Label>Category</Label>
-                    <Select
-                        required
-                        name="category"
-                        defaultValue={product?.categoryId.toString()}
-                    >
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                {categories.map((category) => (
-                                    <SelectItem
-                                        key={category.id}
-                                        value={category.id.toString()}
-                                    >
-                                        {category.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="flex flex-col gap-3">
-                    <Label>Brand</Label>
-                    <Select
-                        name="brand"
-                        defaultValue={product?.brandId?.toString()}
-                    >
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a brand" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                {brands.map((brand) => (
-                                    <SelectItem
-                                        key={brand.id}
-                                        value={brand.id.toString()}
-                                    >
-                                        {brand.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="flex flex-col gap-3">
                     <Label>Price</Label>
                     <Input
                         required
@@ -171,6 +126,80 @@ export default function InventoryForm({
                         defaultValue={product?.price}
                     />
                 </div>
+                <div className="flex gap-3">
+                    <div className="flex flex-col gap-3 flex-1">
+                        <Label>Category</Label>
+                        <Select
+                            required
+                            name="category"
+                            defaultValue={product?.categoryId.toString()}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select a category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    {categories.map((category) => (
+                                        <SelectItem
+                                            key={category.id}
+                                            value={category.id.toString()}
+                                        >
+                                            {category.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <Link
+                        href="/dashboard/categories/create"
+                        className="self-end text-sm text-primary underline"
+                        target="_blank"
+                        title="Add Category"
+                    >
+                        {" "}
+                        <Button type="button">
+                            <Plus />
+                        </Button>
+                    </Link>
+                </div>
+                <div className="flex gap-3">
+                    <div className="flex flex-col gap-3 flex-1">
+                        <Label>Brand</Label>
+                        <Select
+                            name="brand"
+                            defaultValue={product?.brandId?.toString()}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select a brand" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    {brands.map((brand) => (
+                                        <SelectItem
+                                            key={brand.id}
+                                            value={brand.id.toString()}
+                                        >
+                                            {brand.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <Link
+                        href="/dashboard/brands/create"
+                        className="self-end text-sm text-primary underline"
+                        target="_blank"
+                        title="Add Brand"
+                    >
+                        {" "}
+                        <Button type="button">
+                            <Plus />
+                        </Button>
+                    </Link>
+                </div>
+
                 <div className="flex flex-col gap-3">
                     <Label>Description</Label>
                     <Textarea

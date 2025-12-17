@@ -65,6 +65,11 @@ export enum UserPermission {
     CreateNotification = "create_notification",
     UpdateNotification = "update_notification",
     DeleteNotification = "delete_notification",
+
+    ViewRetours = "view_retours",
+    CreateRetours = "create_retours",
+    UpdateRetours = "update_retours",
+    DeleteRetours = "delete_retours",
 }
 
 export enum DeliveryStatus {
