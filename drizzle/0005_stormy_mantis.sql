@@ -1,0 +1,1 @@
+CREATE TYPE "public"."retour_status" AS ENUM('pending', 'received', 'accepted', 'declined', 'cancelled');

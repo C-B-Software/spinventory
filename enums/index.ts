@@ -36,6 +36,7 @@ export enum NotificationAction {
 
 export enum UserPermission {
     ViewOrders = "view_orders",
+    UpdateOrders = "update_orders",
 
     ViewInvoices = "view_invoices",
 
@@ -86,4 +87,12 @@ export enum DHLDeliveryStatus {
     PreTransit = "pre-transit",
     Transit = "transit",
     Unknown = "unknown",
+}
+
+export enum RetourStatus {
+    Pending = "pending",
+    Received = "received",
+    Accepted = "accepted",
+    Declined = "declined",
+    Cancelled = "cancelled",
 }

@@ -15,7 +15,7 @@ import {
 import { z } from "zod";
 import { eq, desc, asc } from "drizzle-orm";
 import { authorized, hasPermissions } from "./security";
-import { UserPermission } from "@/enums";
+import { OrderStatus, UserPermission } from "@/enums";
 
 export async function getOrders(): Promise<z.infer<typeof orderSchema>[]> {
     await authorized();
@@ -105,5 +105,29 @@ export async function getOrderWithCustomerAndOrderItems(
     } else {
         console.error("Invalid order data:", result.error);
         return null;
+    }
+}
+
+export async function updateOrder(
+    orderId: number,
+    data: FormData
+): Promise<{ success: boolean; error?: string }> {
+    await authorized();
+    await hasPermissions([UserPermission.UpdateOrders]);
+
+    try {
+        const status = data.get("status") as OrderStatus;
+
+        await db
+            .update(ordersTable)
+            .set({
+                status,
+            })
+            .where(eq(ordersTable.id, orderId));
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating order:", error);
+        return { success: false, error: "Failed to update order." };
     }
 }

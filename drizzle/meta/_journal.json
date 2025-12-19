@@ -22,6 +22,48 @@
       "when": 1765999661677,
       "tag": "0002_low_marvel_zombies",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1766000406826,
+      "tag": "0003_tan_tinkerer",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1766177773385,
+      "tag": "0004_good_onslaught",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1766179232442,
+      "tag": "0005_stormy_mantis",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1766179321652,
+      "tag": "0006_magenta_christian_walker",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1766179633499,
+      "tag": "0007_rare_praxagora",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1766182211602,
+      "tag": "0008_zippy_sumo",
+      "breakpoints": true
     }
   ]
 }

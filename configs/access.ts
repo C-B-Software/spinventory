@@ -48,6 +48,27 @@ export default {
             permissions: [UserPermission.ViewInventory],
         },
         {
+            validation: (pathname: string) => pathname === "/dashboard/retours",
+            permissions: [UserPermission.ViewRetours],
+        },
+        {
+            validation: (pathname: string) =>
+                pathname === "/dashboard/retours/create",
+            permissions: [UserPermission.CreateRetours],
+        },
+        {
+            validation: (pathname: string) =>
+                pathname.includes("/dashboard/retours/") &&
+                pathname.endsWith("/edit"),
+            permissions: [UserPermission.UpdateRetours],
+        },
+        {
+            validation: (pathname: string) =>
+                pathname.includes("/dashboard/retours/") &&
+                pathname.endsWith("/view"),
+            permissions: [UserPermission.ViewRetours],
+        },
+        {
             validation: (pathname: string) =>
                 pathname === "/dashboard/categories",
             permissions: [UserPermission.ViewCategories],

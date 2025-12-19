@@ -15,6 +15,7 @@ import {
     NotificationProvider,
     NotificationAction,
     UserPermission,
+    RetourStatus,
 } from "@/enums";
 
 export const orderStatusEnum = pgEnum("status", OrderStatus);
@@ -30,6 +31,8 @@ export const notificationActionEnum = pgEnum(
 );
 
 export const userPermissionEnum = pgEnum("user_permission", UserPermission);
+
+export const retourStatusEnum = pgEnum("retour_status", RetourStatus);
 
 export const deliveryMethodEnum = pgEnum("delivery_method", [
     "delivery",
@@ -137,6 +140,8 @@ export const ordersTable = pgTable("orders", {
     invoiceCity: text("invoice_city").notNull(),
     invoicePhonenumber: text("invoice_phonenumber"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
+    trackingNumber: text("tracking_number"),
+    deliveryService: text("delivery_service"),
 });
 
 export const auditLogsTable = pgTable("audit_logs", {
@@ -239,6 +244,47 @@ export const verification = pgTable(
     (table) => [index("verification_identifier_idx").on(table.identifier)]
 );
 
+export const orderItemsConfigurationTable = pgTable(
+    "order_items_configuration",
+    {
+        id: serial("id").primaryKey(),
+        orderItemId: integer("order_item_id")
+            .notNull()
+            .references(() => orderItemsTable.id),
+        productId: integer("product_id")
+            .notNull()
+            .references(() => productsTable.id),
+        quantity: integer("quantity").notNull(),
+        createdAt: timestamp("created_at").notNull().defaultNow(),
+    }
+);
+
+export const retoursTable = pgTable("retours", {
+    id: serial("id").primaryKey(),
+    orderId: integer("order_id")
+        .notNull()
+        .references(() => ordersTable.id),
+    customerId: integer("customer_id")
+        .notNull()
+        .references(() => customersTable.id),
+    reason: text("reason").notNull(),
+    status: retourStatusEnum("status").notNull().default(RetourStatus.Pending),
+    note: text("note"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const retourOrderItemsTable = pgTable("retour_order_items", {
+    id: serial("id").primaryKey(),
+    retourId: integer("retour_id")
+        .notNull()
+        .references(() => retoursTable.id),
+    orderItemId: integer("order_item_id")
+        .notNull()
+        .references(() => orderItemsTable.id),
+    quantity: integer("quantity").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const userRelations = relations(usersTable, ({ many }) => ({
     sessions: many(session),
     accounts: many(account),
@@ -338,3 +384,9 @@ export type SelectAuditLog = typeof auditLogsTable.$inferSelect;
 
 export type InsertBrand = typeof brandsTable.$inferInsert;
 export type SelectBrand = typeof brandsTable.$inferSelect;
+
+export type InsertRetour = typeof retoursTable.$inferInsert;
+export type SelectRetour = typeof retoursTable.$inferSelect;
+
+export type InsertRetourOrderItem = typeof retourOrderItemsTable.$inferInsert;
+export type SelectRetourOrderItem = typeof retourOrderItemsTable.$inferSelect;
