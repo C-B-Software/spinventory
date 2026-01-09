@@ -46,7 +46,17 @@ export default function InventoryForm({
         product?.imageUrl ?? null
     );
     const [subImages, setSubImages] = useState<string[]>(
-        product?.noneMainImagesUrl ? product.noneMainImagesUrl.split(",") : []
+        product?.noneMainImagesUrl
+            ? JSON.parse(String(product?.noneMainImagesUrl)).map(
+                  (url: string) => {
+                      return url
+                          .replaceAll("\\", "")
+                          .replaceAll('"', "")
+                          .replaceAll("[", "")
+                          .replaceAll("]", "");
+                  }
+              )
+            : []
     );
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -305,17 +315,33 @@ export default function InventoryForm({
                                 />
                             </div>
                             {subImages.length > 0 &&
-                                [...subImages].reverse().map((img, index) => (
-                                    <div
-                                        key={index}
-                                        style={{
-                                            backgroundImage: `url(${img})`,
-                                            backgroundSize: "cover",
-                                            backgroundPosition: "center",
-                                        }}
-                                        className="h-[20rem] w-[20rem] border border-border rounded-lg flex items-center justify-center flex-shrink-0"
-                                    />
-                                ))}
+                                [...subImages]
+                                    .reverse()
+                                    .filter((url: string) => url != "")
+                                    .map((img, index) => (
+                                        <div
+                                            key={index}
+                                            onClick={() => {
+                                                setSubImages((prev) =>
+                                                    prev.filter(
+                                                        (url) => url !== img
+                                                    )
+                                                );
+                                            }}
+                                            style={{
+                                                backgroundImage: `url(${img})`,
+                                                backgroundSize: "cover",
+                                                backgroundPosition: "center",
+                                            }}
+                                            className="h-[20rem] w-[20rem] border border-border rounded-lg flex items-center justify-center flex-shrink-0 cursor-pointer hover:opacity-75 transition-opacity relative group"
+                                        >
+                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                                                <span className="text-white font-semibold">
+                                                    Click to remove
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
                         </div>
                     </div>
                 </div>

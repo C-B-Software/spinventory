@@ -43,14 +43,38 @@ export async function getOrdersWithCustomersAndOrderItems(): Promise<
 > {
     await authorized();
     await hasPermissions([UserPermission.ViewOrders]);
+
+    // First, get all orders with customers
     const orders = await db
         .select()
         .from(ordersTable)
         .leftJoin(customersTable, eq(ordersTable.customerId, customersTable.id))
-        .leftJoin(orderItemsTable, eq(ordersTable.id, orderItemsTable.orderId))
         .orderBy(desc(ordersTable.createdAt));
 
-    return orders.reduce<
+    // Then, fetch order items separately for each order
+    const ordersWithItems = await Promise.all(
+        orders.map(async (order) => {
+            const orderItems = await db
+                .select()
+                .from(orderItemsTable)
+                .leftJoin(
+                    productsTable,
+                    eq(orderItemsTable.productId, productsTable.id)
+                )
+                .where(eq(orderItemsTable.orderId, order.orders.id))
+                .orderBy(asc(orderItemsTable.id));
+
+            return {
+                ...order,
+                order_items: orderItems.map((item) => ({
+                    ...item.order_items,
+                    product: item.products,
+                })),
+            };
+        })
+    );
+
+    return ordersWithItems.reduce<
         z.infer<typeof ordersWithCustomerandOrderItemsSchema>[]
     >((validOrders, order) => {
         const result = ordersWithCustomerandOrderItemsSchema.safeParse(order);
